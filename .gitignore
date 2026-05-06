@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.env
+*.egg-info/
+dist/
+.pytest_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# Node
+node_modules/
+dist/
+.next/
+*.tsbuildinfo
+
+# IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Data
+*.parquet
+*.arrow
+*.ipc
+sample_data/generated/
+
+# Docker
+.docker/

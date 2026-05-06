@@ -1,0 +1,239 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ── */
+.app-header {
+  align-items: center;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-left {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+}
+
+.logo {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.logo-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.logo-accent { color: var(--good); }
+
+.header-tagline {
+  font-size: 12px;
+  color: var(--text-muted);
+  border-left: 1px solid var(--border);
+  padding-left: 16px;
+}
+
+.header-file {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ── Main ── */
+.app-main {
+  flex: 1;
+}
+
+/* ── Landing ── */
+.landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 60px 24px 80px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.landing-hero {
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.hero-accent { color: var(--good); }
+
+.hero-body {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+.upload-card {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+}
+
+.feature-icon {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: var(--good);
+}
+
+.feature-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.feature-body {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Results ── */
+.results {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  min-height: calc(100vh - 57px);
+}
+
+.results-sidebar {
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  max-height: calc(100vh - 57px);
+  position: sticky;
+  top: 57px;
+}
+
+.sidebar-section {
+  border-bottom: 1px solid var(--border);
+  padding: 20px;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.results-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px 40px;
+  overflow-y: auto;
+}
+
+/* ── Schema card ── */
+.schema-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+}
+
+.schema-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.schema-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.schema-row {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.schema-col {
+  color: var(--text-primary);
+  font-size: 12px;
+  min-width: 120px;
+}
+
+.schema-type {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* ── Error ── */
+.error-box {
+  background: var(--critical-dim);
+  border: 1px solid var(--critical);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 13px;
+  margin-top: 12px;
+  padding: 10px 14px;
+}
+
+/* ── Utilities ── */
+.mono { font-family: var(--mono-font); }
+
+@media (max-width: 900px) {
+  .results {
+    grid-template-columns: 1fr;
+  }
+  .results-sidebar {
+    position: static;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}

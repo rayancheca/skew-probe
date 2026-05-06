@@ -1,0 +1,203 @@
+.advisor-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+.advisor-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.advisor-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.score-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.score-row {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 110px 1fr 32px 80px;
+  padding: 10px 20px;
+  text-align: left;
+  transition: background var(--duration-fast);
+  width: 100%;
+}
+
+.score-row:hover { background: var(--surface-elevated); }
+.score-row.active { background: var(--surface-hover); }
+
+.score-col-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score-bar-wrap {
+  background: var(--surface-elevated);
+  border-radius: 2px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+.score-num {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.severity-badge {
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.hints-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 20px;
+}
+
+.explanation-box {
+  background: var(--surface-elevated);
+  border-left: 3px solid;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 10px 14px;
+}
+
+.explain-icon {
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.hint-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toggle-group {
+  display: flex;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: var(--mono-font);
+  font-size: 12px;
+  padding: 5px 12px;
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.toggle-btn:hover { background: var(--surface-hover); color: var(--text-primary); }
+.toggle-btn.active { background: var(--good); color: #0c1118; font-weight: 600; }
+
+.code-block-wrap {
+  position: relative;
+}
+
+.copy-btn {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--mono-font);
+  font-size: 11px;
+  padding: 3px 8px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  transition: color var(--duration-fast);
+  z-index: 1;
+}
+
+.copy-btn:hover { color: var(--good); }
+
+.code-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--mono-font);
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-x: auto;
+  padding: 14px 16px;
+  white-space: pre;
+}
+
+.score-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.score-breakdown-row {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 88px 1fr 32px;
+}
+
+.breakdown-label {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.breakdown-bar-bg {
+  background: var(--surface-elevated);
+  border-radius: 2px;
+  height: 5px;
+  overflow: hidden;
+}
+
+.breakdown-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+.breakdown-val {
+  font-size: 11px;
+  text-align: right;
+}

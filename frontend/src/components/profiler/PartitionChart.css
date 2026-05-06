@@ -1,0 +1,79 @@
+.partition-chart-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px 12px;
+  position: relative;
+}
+
+.chart-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.chart-subtitle {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.partition-svg {
+  width: 100%;
+  overflow: visible;
+}
+
+.axis text {
+  fill: var(--text-muted);
+  font-family: var(--mono-font);
+  font-size: 11px;
+}
+
+.axis .domain { display: none; }
+.axis .tick line { stroke: var(--border-subtle); }
+
+.y-axis .tick line {
+  stroke: var(--border-subtle);
+  stroke-dasharray: 2 4;
+  x2: 1000;
+}
+
+.mean-line {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.mean-label {
+  fill: var(--text-muted);
+  font-family: var(--mono-font);
+  font-size: 10px;
+}
+
+.bar-hit { cursor: crosshair; }
+
+.chart-tooltip {
+  position: fixed;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--mono-font);
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: 0;
+  padding: 6px 10px;
+  pointer-events: none;
+  transition: opacity 80ms;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.tt-key {
+  color: var(--good);
+  font-weight: 600;
+}

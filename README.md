@@ -17,6 +17,52 @@ SkewProbe ingests columnar data (Parquet, CSV), profiles key distributions using
 
 ---
 
+## Live Walkthrough
+
+All screenshots below are captured from the running application with real Parquet data (500K rows, Zipf-distributed `user_id`).
+
+### Step 1 — Landing page: upload form and feature overview
+
+![Landing page](docs/screenshots/01-landing.png)
+
+### Step 2 — File loaded, columns and worker count configured
+
+![File configured](docs/screenshots/02-configured.png)
+
+*`sample.parquet` dropped in, partition columns set to `user_id, region, event_type`, 8 workers.*
+
+### Step 3 — Results: `user_id` column — severe skew detected
+
+![user_id results](docs/screenshots/03-results-user-id.png)
+
+*9.2× skew ratio. `user_0` holds 183K of 500K rows. HyperLogLog estimates ~5.1K distinct keys (±0.8%). The bar chart's cold-to-warm color scale makes the hot key visually unmistakable. The straggler timeline shows W0 (the straggler) in orange, taking 3.69× longer than ideal.*
+
+### Step 4 — Straggler simulator: 3.69× slowdown, 72.9% idle workers
+
+![Straggler timeline](docs/screenshots/04-straggler-timeline.png)
+
+*Greedy LPT assignment across 8 workers. Ideal finish: 0.05s. Actual: 0.18s. The orange dashed region shows idle time wasted waiting for the straggler — 72.9% of total worker capacity burned.*
+
+### Step 5 — `region` column: healthy uniform distribution
+
+![region results](docs/screenshots/05-results-region.png)
+
+*2.1× skew ratio — the column selector dot turns green. Advisor scores it 94/100. The bar chart shows near-uniform distribution across 6 regions.*
+
+### Step 6 — Partition Advisor: ready-to-paste DuckDB salting SQL
+
+![DuckDB salting](docs/screenshots/06-advisor-duckdb-salting.png)
+
+*One click generates a `CONCAT(user_id, '_', HASH(user_id) % 8)` salting expression. The score breakdown shows entropy, null penalty, and skew penalty independently.*
+
+### Step 7 — PySpark repartition hint
+
+![PySpark repartition](docs/screenshots/07-advisor-pyspark-repartition.png)
+
+*Switch engine and hint type — the snippet updates instantly. Copy button puts it on the clipboard.*
+
+---
+
 ## Architecture
 
 ```

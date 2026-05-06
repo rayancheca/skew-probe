@@ -28,11 +28,11 @@ def iter_csv_batches(path: Path) -> Iterator[pa.RecordBatch]:
     """
     Read a CSV file via DuckDB (handles auto-detection), convert to Arrow.
     DuckDB is used here because it handles messy real-world CSV reliably.
+    Uses read_csv() with a validated path to avoid string-interpolation injection.
     """
     con = duckdb.connect()
-    arrow_table = con.execute(
-        f"SELECT * FROM read_csv_auto('{path}', sample_size=-1)"
-    ).arrow()
+    # read_csv accepts a file path directly — no SQL string interpolation
+    arrow_table = con.read_csv(str(path)).arrow()
     for batch in arrow_table.to_batches(max_chunksize=_BATCH_SIZE):
         yield batch
 

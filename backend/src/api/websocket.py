@@ -14,6 +14,7 @@ import asyncio
 import json
 from pathlib import Path
 
+import pyarrow as pa
 import pyarrow.parquet as pq
 from fastapi import WebSocket, WebSocketDisconnect
 
@@ -125,7 +126,21 @@ async def handle_parquet_stream(
 
 
 async def _iter_parquet_async(pf: pq.ParquetFile):
-    """Async wrapper around PyArrow's synchronous batch iterator."""
-    for batch in pf.iter_batches(batch_size=50_000):
+    """
+    Async wrapper that reads Parquet batches off the event loop thread.
+    Each batch is fetched in a thread pool executor to avoid blocking the loop.
+    """
+    loop = asyncio.get_running_loop()
+    iterator = pf.iter_batches(batch_size=50_000)
+
+    def _next_batch() -> pa.RecordBatch | None:
+        try:
+            return next(iterator)
+        except StopIteration:
+            return None
+
+    while True:
+        batch = await loop.run_in_executor(None, _next_batch)
+        if batch is None:
+            break
         yield batch
-        await asyncio.sleep(0)

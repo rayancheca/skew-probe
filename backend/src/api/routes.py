@@ -24,7 +24,7 @@ from src.api.models import (
 )
 from src.profiler.batch_processor import read_csv_bytes, read_parquet_bytes, infer_schema
 from src.profiler.partition_profiler import PartitionProfiler, PartitionStats
-from src.simulator.straggler_sim import simulate_straggler
+from src.simulator.straggler_sim import SimulationResult, simulate_straggler
 
 router = APIRouter()
 
@@ -43,16 +43,14 @@ def _stats_to_response(stats: PartitionStats) -> ColumnStatsResponse:
     )
 
 
-def _sim_to_response(sim: object) -> SimulationResponse:
-    from src.simulator.straggler_sim import SimulationResult  # local to avoid circular
-    result: SimulationResult = sim  # type: ignore[assignment]
+def _sim_to_response(sim: SimulationResult) -> SimulationResponse:
     return SimulationResponse(
-        num_workers=result.num_workers,
-        total_rows=result.total_rows,
-        rows_per_sec=result.rows_per_sec,
-        ideal_finish_sec=result.ideal_finish_sec,
-        actual_finish_sec=result.actual_finish_sec,
-        slowdown_factor=result.slowdown_factor,
+        num_workers=sim.num_workers,
+        total_rows=sim.total_rows,
+        rows_per_sec=sim.rows_per_sec,
+        ideal_finish_sec=sim.ideal_finish_sec,
+        actual_finish_sec=sim.actual_finish_sec,
+        slowdown_factor=sim.slowdown_factor,
         worker_timelines=[
             WorkerTimelineResponse(
                 worker_id=t.worker_id,
@@ -60,10 +58,10 @@ def _sim_to_response(sim: object) -> SimulationResponse:
                 finish_time_sec=t.finish_time_sec,
                 is_straggler=t.is_straggler,
             )
-            for t in result.worker_timelines
+            for t in sim.worker_timelines
         ],
-        straggler_worker_id=result.straggler_worker_id,
-        idle_fraction=result.idle_fraction,
+        straggler_worker_id=sim.straggler_worker_id,
+        idle_fraction=sim.idle_fraction,
     )
 
 
@@ -131,8 +129,8 @@ async def _profile_table(
 async def analyze_file(
     file: Annotated[UploadFile, File()],
     partition_columns: Annotated[str, Form()],
-    num_workers: Annotated[int, Form()] = 8,
-    rows_per_sec: Annotated[float, Form()] = 1_000_000,
+    num_workers: Annotated[int, Form(ge=1, le=1024)] = 8,
+    rows_per_sec: Annotated[float, Form(gt=0)] = 1_000_000,
 ) -> ProfileResponse:
     """
     Upload a Parquet or CSV file and receive partition health analysis.
@@ -156,11 +154,17 @@ async def analyze_file(
         elif filename.endswith(".csv"):
             table = await asyncio.to_thread(read_csv_bytes, content)
         else:
-            # Try Parquet first, then CSV
+            # Try Parquet first, then CSV; preserve the first error for diagnostics
             try:
                 table = await asyncio.to_thread(read_parquet_bytes, content)
-            except Exception:
-                table = await asyncio.to_thread(read_csv_bytes, content)
+            except Exception as parquet_exc:
+                try:
+                    table = await asyncio.to_thread(read_csv_bytes, content)
+                except Exception as csv_exc:
+                    raise HTTPException(
+                        status_code=422,
+                        detail=f"Could not read as Parquet ({parquet_exc}) or CSV ({csv_exc})",
+                    ) from csv_exc
     except Exception as exc:
         raise HTTPException(
             status_code=422, detail=f"Failed to read file: {exc}"

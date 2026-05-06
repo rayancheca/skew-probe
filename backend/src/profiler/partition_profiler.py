@@ -7,8 +7,6 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Any
-
 import pyarrow as pa
 
 from src.algorithms.count_min_sketch import CountMinSketch
@@ -18,6 +16,7 @@ _CMS_EPSILON: float = 0.005
 _CMS_DELTA: float = 0.01
 _HLL_B: int = 14
 _TOP_K: int = 20
+_SEEN_KEYS_CAP: int = _TOP_K * 25  # Max keys tracked exactly; evict below min on overflow
 
 
 @dataclass
@@ -57,7 +56,18 @@ class ColumnProfiler:
             key = str(scalar.as_py())
             self.cms.add(key)
             self.hll.add(key)
-            self._seen_keys[key] = self._seen_keys.get(key, 0) + 1
+            new_count = self._seen_keys.get(key, 0) + 1
+            self._seen_keys[key] = new_count
+        self._evict_if_needed()
+
+    def _evict_if_needed(self) -> None:
+        """Evict low-count keys when the seen_keys dict exceeds the cap.
+        Keeps the top-K candidates; discards the tail to bound memory use."""
+        if len(self._seen_keys) <= _SEEN_KEYS_CAP:
+            return
+        # Retain the top _SEEN_KEYS_CAP entries by count
+        sorted_items = sorted(self._seen_keys.items(), key=lambda kv: kv[1], reverse=True)
+        self._seen_keys = dict(sorted_items[:_SEEN_KEYS_CAP])
 
     def stats(self) -> PartitionStats:
         """Compute and return the current PartitionStats snapshot."""
